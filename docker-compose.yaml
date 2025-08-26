@@ -56,6 +56,42 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+  
+  node_exporter:
+    image: prom/node-exporter
+    restart: unless-stopped
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    volumes:
+      - '/:/host:ro,rslave'
+  
+  prometheus:
+    image: prom/prometheus
+    restart: unless-stopped
+    # ports: 
+    #   - '9090:9090'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.retention.size=5GB'
+      - '--storage.tsdb.path=/prometheus'
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - prometheus_data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  
+  grafana:
+    image: grafana/grafana
+    restart: unless-stopped
+    # ports:
+    #   - '3000:3000'
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
 
 volumes:
   n8n_data:
@@ -63,3 +99,5 @@ volumes:
   npm_data:
   letsencrypt:
   pgadmin_data:
+  prometheus_data:
+  grafana_data:
