@@ -13,6 +13,7 @@ services:
       - N8N_PROTOCOL=https
       - N8N_PROXY_HOPS=1
       - N8N_PAYLOAD_SIZE_MAX=64
+      - N8N_METRICS=true
       - N8N_HOST=n8n.domain.com
       - WEBHOOK_URL=https://n8n.domain.com/
       - NODE_ENV=production
